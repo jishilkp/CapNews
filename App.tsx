@@ -11,6 +11,7 @@ import NewsList from './components/NewsList';
 import NewsDetails from './components/NewsDetails';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const slides = [
   {
@@ -40,10 +41,31 @@ type Item = typeof slides[0];
 const Stack = createStackNavigator();
 
 const App = () => {
+  const FIRST_LAUNCH_STORAGE_KEY = 'first_launch';
+
   const [firstLaunch, setFirstLaunch] = React.useState(false);
 
-  const appIntroDone = () => {
+  const setFirstLaunchStatus = async () => {
+    try {
+      const value = await AsyncStorage.getItem(FIRST_LAUNCH_STORAGE_KEY);
+      let isFirstLaunch = value != null ? JSON.parse(value) : true;
+      setFirstLaunch(isFirstLaunch);
+    } catch(error) {
+      setFirstLaunch(false);
+    }
+  };
+
+  React.useEffect(() => {
+    setFirstLaunchStatus();
+  }, []);
+
+  const appIntroDone = async () => {
     setFirstLaunch(false);
+    try {
+      await AsyncStorage.setItem(FIRST_LAUNCH_STORAGE_KEY, JSON.stringify(false));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const _renderItem = ({ item }: { item: Item }) => {
