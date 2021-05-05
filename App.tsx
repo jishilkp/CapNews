@@ -7,7 +7,7 @@
    StatusBar
  } from 'react-native';
  import AppIntroSlider from 'react-native-app-intro-slider';
- import Feeds from './components/Feeds';
+ import NewsList from './components/NewsList';
 
  const slides = [
    {
@@ -35,7 +35,7 @@
  type Item = typeof slides[0];
 
  const App = () => {
-   const [firstLaunch, setFirstLaunch] = React.useState(true);
+   const [firstLaunch, setFirstLaunch] = React.useState(false);
 
    const appIntroDone = () => {
      setFirstLaunch(false);
@@ -73,7 +73,7 @@
      )
    } else {
      return (
-       <Feeds/>
+       <NewsList/>
      );
    }
  };
