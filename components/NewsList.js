@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList} from 'react-native';
+import { StyleSheet, Text, View, FlatList, ToastAndroid } from 'react-native';
 import { parse } from 'fast-xml-parser';
 import NewsCard from './NewsCard'
 
-const NewsList = () => {
+const NewsList = ({navigation}) => {
 
   const API_URL = 'https://feeds.24.com/articles/Fin24/Tech/rss';
 
@@ -16,10 +16,17 @@ const NewsList = () => {
       .then((response) => response.text())
       .then((textResponse) => {
         setRefreshing(false);
+        ToastAndroid.show("News updated!", ToastAndroid.SHORT);
         let data = parse(textResponse);
         if (data && data.rss && data.rss.channel && data.rss.channel.item) {
           let _news = data.rss.channel.item;
-          setNews(_news);
+          const modifiedNews = _news.map((item) => {
+            let title = item.title.split('|');
+            item.source = title[0];
+            item.title = title[1];
+            return item;
+          });
+          setNews(modifiedNews);
         }
       })
       .catch((error) => {
@@ -44,7 +51,7 @@ const NewsList = () => {
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => {
           return (
-            <NewsCard data={item}/>
+            <NewsCard data={item} navigation={navigation}/>
           )
         }}
         refreshing={refreshing}

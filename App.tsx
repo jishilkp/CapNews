@@ -1,105 +1,116 @@
- import React from 'react';
- import {
-   StyleSheet,
-   Text,
-   View,
-   Image,
-   StatusBar
- } from 'react-native';
- import AppIntroSlider from 'react-native-app-intro-slider';
- import NewsList from './components/NewsList';
+import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  StatusBar
+} from 'react-native';
+import AppIntroSlider from 'react-native-app-intro-slider';
+import NewsList from './components/NewsList';
+import NewsDetails from './components/NewsDetails';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
- const slides = [
-   {
-     key: 'one',
-     title: 'Welcome to CapNews',
-     text: 'Amazing React Native app with cool features',
-     image: require('./assets/1.png'),
-     backgroundColor: '#00C1CC',
-   },
-   {
-     key: 'two',
-     title: 'News feeds',
-     text: 'Keep up to date with latest tech news',
-     image: require('./assets/2.png'),
-     backgroundColor: '#febe29',
-   },
-   {
-     key: 'three',
-     title: 'More',
-     text: 'Many more exiting features baking..',
-     image: require('./assets/3.png'),
-     backgroundColor: '#59B2AC',
-   }
- ];
- type Item = typeof slides[0];
+const slides = [
+  {
+    key: 'one',
+    title: 'Welcome to CapNews',
+    text: 'Amazing React Native app with cool features',
+    image: require('./assets/1.png'),
+    backgroundColor: '#00C1CC',
+  },
+  {
+    key: 'two',
+    title: 'News feeds',
+    text: 'Keep up to date with latest tech news',
+    image: require('./assets/2.png'),
+    backgroundColor: '#febe29',
+  },
+  {
+    key: 'three',
+    title: 'More',
+    text: 'Many more exiting features baking..',
+    image: require('./assets/3.png'),
+    backgroundColor: '#59B2AC',
+  }
+];
+type Item = typeof slides[0];
 
- const App = () => {
-   const [firstLaunch, setFirstLaunch] = React.useState(false);
+const Stack = createStackNavigator();
 
-   const appIntroDone = () => {
-     setFirstLaunch(false);
-   }
+const App = () => {
+  const [firstLaunch, setFirstLaunch] = React.useState(false);
 
-   const _renderItem = ({item}: {item: Item}) => {
-     return (
-       <View
-         style={[
-           styles.slide,
-           {
-             backgroundColor: item.backgroundColor,
-           },
-         ]}>
-         <Text style={styles.title}>{item.title}</Text>
-         <Image source={item.image} style={styles.image} />
-         <Text style={styles.description}>{item.text}</Text>
-       </View>
-     );
-   };
+  const appIntroDone = () => {
+    setFirstLaunch(false);
+  }
 
-   const _keyExtractor = (item: Item) => item.key;
+  const _renderItem = ({ item }: { item: Item }) => {
+    return (
+      <View
+        style={[
+          styles.slide,
+          {
+            backgroundColor: item.backgroundColor,
+          },
+        ]}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Image source={item.image} style={styles.image} />
+        <Text style={styles.description}>{item.text}</Text>
+      </View>
+    );
+  };
 
-   if (firstLaunch) {
-     return (
-       <View style={{flex: 1}}>
-         <StatusBar translucent backgroundColor="transparent" />
-         <AppIntroSlider
-           renderItem={_renderItem}
-           keyExtractor={_keyExtractor}
-           data={slides}
-           onDone={() => appIntroDone()}
-         />
-       </View>
-     )
-   } else {
-     return (
-       <NewsList/>
-     );
-   }
- };
+  const _keyExtractor = (item: Item) => item.key;
 
- const styles = StyleSheet.create({
-   slide: {
-     flex: 1,
-     alignItems: 'center',
-     justifyContent: 'center',
-     backgroundColor: 'blue',
-   },
-   image: {
-     width: 320,
-     height: 320,
-     marginVertical: 32,
-   },
-   description: {
-     fontSize: 16,
-     color: 'white',
-     textAlign: 'center',
-   },
-   title: {
-     fontSize: 30,
-     color: 'white',
-     textAlign: 'center',
-   }
- });
 
- export default App;
+  if (firstLaunch) {
+    return (
+      <View style={{ flex: 1 }}>
+        <StatusBar translucent backgroundColor="transparent" />
+        <AppIntroSlider
+          renderItem={_renderItem}
+          keyExtractor={_keyExtractor}
+          data={slides}
+          onDone={() => appIntroDone()}
+        />
+      </View>
+    )
+  } else {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator >
+          <Stack.Screen name="NewsList" component={NewsList} options={{headerShown: false}}/>
+          <Stack.Screen name="NewsDetails" component={NewsDetails} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+};
+
+const styles = StyleSheet.create({
+  slide: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'blue',
+  },
+  image: {
+    width: 320,
+    height: 320,
+    marginVertical: 32,
+  },
+  description: {
+    fontSize: 16,
+    color: 'white',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: 30,
+    color: 'white',
+    textAlign: 'center',
+  }
+});
+
+export default App;
