@@ -1,6 +1,6 @@
 # CapNews
 
-It is a simple React Native application to display letest news feeds. It is a self-learning project, created to explore the features and components of React Native.
+It is a simple React Native application to display news feeds. It is a self-learning project, created to explore the features and components of React Native.
 
 Api Provider [feeds.24.com](https://feeds.24.com/articles/Fin24/Tech/rss).
 
