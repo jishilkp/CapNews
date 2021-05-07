@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Linking, Text } from 'react-native';
 import { Button, Card, Title, Paragraph, TouchableRipple } from 'react-native-paper';
+import Constants from '../config/Constants';
 import {News} from '../models/News';
 
 export interface Props {
@@ -18,7 +19,7 @@ const NewsCard = ({data, navigation}: Props) => {
             onPress={() => goToDetails()}
             rippleColor="rgba(0, 0, 0, .32)">
             <Card style={styles.card}>
-                <Card.Cover source={{ uri: 'https://www.basicsusa.com/images/technews.jpg' }} />
+                <Card.Cover source={Constants.NEWS_DEFAULT_IMAGE_URI} />
                 <Card.Content>
                     <Title>{data.title}</Title>
                     <Paragraph>{data.description}</Paragraph>

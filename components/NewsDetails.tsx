@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Linking, Text} from 'react-native';
 import { Button, Card, Title, Paragraph } from 'react-native-paper';
 import {News} from '../models/News';
-
+import Constants from '../config/Constants';
 export interface Props {
     route: {
         params : News
@@ -12,7 +12,7 @@ export interface Props {
 const NewsDetails = ({ route }:Props) => {
     return (
         <Card style={styles.card}>
-            <Card.Cover source={{ uri: 'https://www.basicsusa.com/images/technews.jpg' }} />
+            <Card.Cover source={Constants.NEWS_DEFAULT_IMAGE_URI} />
             <Card.Content>
                 <Title>{route.params.title}</Title>
                 <Paragraph>{route.params.description}</Paragraph>

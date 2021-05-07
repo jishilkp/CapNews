@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationScreenProp } from 'react-navigation';
 import uuid from 'react-native-uuid';
 import { News } from '../models/News';
+import Constants from '../config/Constants';
 
 export interface NewsListScreenProps {
   navigation: NavigationScreenProp<any, any>
@@ -14,16 +15,13 @@ export interface NewsListScreenProps {
 
 const NewsList = ({ navigation }: NewsListScreenProps) => {
 
-  const API_URL: string = 'https://feeds.24.com/articles/Fin24/Tech/rss';
-  const STORAGE_KEY: string = 'news_data';
-
   const [news, setNews] = React.useState<News[]>([]);
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
 
   const getNewsFromStorage = async () => {
     let cachedNews: News[] = [];
     try {
-      const data = await AsyncStorage.getItem(STORAGE_KEY);
+      const data = await AsyncStorage.getItem(Constants.STORAGE_KEY);
       if (data) {
         cachedNews = JSON.parse(data);
       }
@@ -35,7 +33,7 @@ const NewsList = ({ navigation }: NewsListScreenProps) => {
 
   const setNewsToStorage = async (cachedNews: News[]) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(cachedNews));
+      await AsyncStorage.setItem(Constants.STORAGE_KEY, JSON.stringify(cachedNews));
     } catch (error) {
       console.log(error);
     }
@@ -58,7 +56,7 @@ const NewsList = ({ navigation }: NewsListScreenProps) => {
 
   const getNewsFromApi = async () => {
     setRefreshing(true);
-    fetch(API_URL)
+    fetch(Constants.API_URL)
       .then((response) => response.text())
       .then(async (textResponse) => {
         setRefreshing(false);
@@ -85,6 +83,7 @@ const NewsList = ({ navigation }: NewsListScreenProps) => {
       })
       .catch(async (error) => {
         showAlert();
+        Alert.showAlert()
         setRefreshing(false);
         let _news: any = await getNewsFromStorage();
         setNews(_news);
