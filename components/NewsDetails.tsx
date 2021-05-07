@@ -1,8 +1,15 @@
 import React from 'react';
 import { StyleSheet, Linking, Text} from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { Button, Card, Title, Paragraph } from 'react-native-paper';
+import {News} from '../models/News';
 
-const NewsDetails = ({ route, navigation }) => {
+export interface Props {
+    route: {
+        params : News
+    }
+}
+
+const NewsDetails = ({ route }:Props) => {
     return (
         <Card style={styles.card}>
             <Card.Cover source={{ uri: 'https://www.basicsusa.com/images/technews.jpg' }} />

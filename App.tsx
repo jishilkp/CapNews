@@ -13,7 +13,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const slides = [
+
+type Slide = {
+  key: string;
+  title: string;
+  text: string;
+  image: string;
+  backgroundColor: string;
+};
+
+const slides: Slide[] = [
   {
     key: 'one',
     title: 'Welcome to CapNews',
@@ -36,19 +45,18 @@ const slides = [
     backgroundColor: '#59B2AC',
   }
 ];
-type Item = typeof slides[0];
 
 const Stack = createStackNavigator();
 
 const App = () => {
-  const FIRST_LAUNCH_STORAGE_KEY = 'first_launch';
+  const FIRST_LAUNCH_STORAGE_KEY: string = 'first_launch';
 
-  const [firstLaunch, setFirstLaunch] = React.useState(false);
+  const [firstLaunch, setFirstLaunch] = React.useState<boolean>(true);
 
   const setFirstLaunchStatus = async () => {
     try {
       const value = await AsyncStorage.getItem(FIRST_LAUNCH_STORAGE_KEY);
-      let isFirstLaunch = value != null ? JSON.parse(value) : true;
+      let isFirstLaunch: boolean = value != null ? JSON.parse(value) : true;
       setFirstLaunch(isFirstLaunch);
     } catch(error) {
       setFirstLaunch(false);
@@ -68,7 +76,7 @@ const App = () => {
     }
   }
 
-  const _renderItem = ({ item }: { item: Item }) => {
+  const _renderItem = ({ item }: { item: Slide }) => {
     return (
       <View
         style={[
@@ -84,7 +92,7 @@ const App = () => {
     );
   };
 
-  const _keyExtractor = (item: Item) => item.key;
+  const _keyExtractor = (item: Slide) => item.key;
 
 
   if (firstLaunch) {
@@ -104,7 +112,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator >
           <Stack.Screen name="NewsList" component={NewsList} options={{headerShown: false}}/>
-          <Stack.Screen name="NewsDetails" component={NewsDetails} />
+          <Stack.Screen name="NewsDetails" component={NewsDetails} options={{ title: 'Details' }} />
         </Stack.Navigator>
       </NavigationContainer>
     );

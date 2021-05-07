@@ -1,37 +1,60 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ToastAndroid, Alert } from 'react-native';
 import { parse } from 'fast-xml-parser';
 import NewsCard from './NewsCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationScreenProp } from 'react-navigation';
+import uuid from 'react-native-uuid';
+import { News } from '../models/News';
 
-const NewsList = ({navigation}) => {
+export interface NewsListScreenProps {
+  navigation: NavigationScreenProp<any, any>
+};
 
-  const API_URL = 'https://feeds.24.com/articles/Fin24/Tech/rss';
-  const STORAGE_KEY = 'news_data';
 
-  const [news, setNews] = React.useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+const NewsList = ({ navigation }: NewsListScreenProps) => {
+
+  const API_URL: string = 'https://feeds.24.com/articles/Fin24/Tech/rss';
+  const STORAGE_KEY: string = 'news_data';
+
+  const [news, setNews] = React.useState<News[]>([]);
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
 
   const getNewsFromStorage = async () => {
-    let cachedNews = [];
+    let cachedNews: News[] = [];
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEY);
-      if(data) {
+      if (data) {
         cachedNews = JSON.parse(data);
       }
       return cachedNews;
-    } catch(error) {
+    } catch (error) {
       return cachedNews;
     }
   };
 
-  const setNewsToStorage = async (cachedNews) => {
+  const setNewsToStorage = async (cachedNews: News[]) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(cachedNews));
     } catch (error) {
       console.log(error);
     }
   };
+
+  const showAlert = () =>
+    Alert.alert(
+      "News fetch failed",
+      "Please check your internet connectivity and try again!",
+      [
+        {
+          text: "OK",
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true
+      }
+    );
 
   const getNewsFromApi = async () => {
     setRefreshing(true);
@@ -45,22 +68,25 @@ const NewsList = ({navigation}) => {
           let _news = data.rss.channel.item;
           // Removed source name from the news title
           // Added a new key source
-          const modifiedNews = _news.map((item) => {
+          const modifiedNews = _news.map((item: News) => {
             let title = item.title.split('|');
             item.source = title[0];
             item.title = title[1];
+            item.key = uuid.v4() as string;
+
             return item;
           });
           setNews(modifiedNews);
           setNewsToStorage(modifiedNews);
         } else {
-          const _news = await getNewsFromStorage();
+          const _news: News[] = await getNewsFromStorage();
           setNews(_news);
         }
       })
       .catch(async (error) => {
+        showAlert();
         setRefreshing(false);
-        let _news = await getNewsFromStorage();
+        let _news: any = await getNewsFromStorage();
         setNews(_news);
       });
   };
@@ -76,12 +102,12 @@ const NewsList = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Cap News</Text>
-      <FlatList style={styles.itemsList}
+      <FlatList
         data={news}
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => {
           return (
-            <NewsCard data={item} navigation={navigation}/>
+            <NewsCard data={item} navigation={navigation} />
           )
         }}
         refreshing={refreshing}
